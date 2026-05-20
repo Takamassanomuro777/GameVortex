@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameVortex</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050505;
+            --card-bg: #151515;
+            --text: #e0e0e0;
+            --accent: #ff0055;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        /* TÍTULO TEXTO RGB */
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(
+                to right, 
+                #ff0055, #7000ff, #00f2ff, #00ff55, #ffff00, #ff0055
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textoRGB 3s linear infinite;
+            filter: drop-shadow(0 2px 10px rgba(0, 242, 255, 0.2));
+        }
+
+        @keyframes textoRGB {
+            to { background-position: 200% center; }
+        }
+
+        .main-logo {
+            width: 420px;
+            max-width: 90%;
+            margin-bottom: 10px;
+            transition: 0.4s;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.5));
+        }
+
+        .main-logo:hover {
+            transform: scale(1.05);
+            animation: efeitoRGB 2s linear infinite;
+        }
+
+        @keyframes efeitoRGB {
+            0% { filter: drop-shadow(0 0 20px #ff0055) drop-shadow(0 0 35px #7000ff); }
+            25% { filter: drop-shadow(0 0 20px #00f2ff) drop-shadow(0 0 35px #00ff55); }
+            50% { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 35px #ff7700); }
+            75% { filter: drop-shadow(0 0 20px #ff00ff) drop-shadow(0 0 35px #7000ff); }
+            100% { filter: drop-shadow(0 0 20px #ff0055) drop-shadow(0 0 35px #7000ff); }
+        }
+
+        .logo-subtitle {
+            font-size: 1.1rem;
+            color: #bdbdbd;
+            letter-spacing: 2px;
+            margin-top: -5px;
+        }
+
+        .dev-credits {
+            background: rgba(112, 0, 255, 0.1);
+            border: 1px solid var(--secondary);
+            padding: 8px 16px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        .floating-mobile-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1500;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .floating-mobile-btn:hover {
+            transform: scale(1.08);
+        }
+
+        /* LOGIN OVERLAY */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.98);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
+        }
+
+        .login-box small {
+            display: block;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        input {
+            display: block;
+            width: 280px;
+            margin: 15px auto;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #000;
+            color: #fff;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* TELA DE ERRO (FUNDO BORRADO) */
+        .error-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000; /* Fica por cima do login */
+        }
+
+        .error-box {
+            background: #111;
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 2px solid var(--accent);
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.4);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .error-box h3 {
+            color: var(--accent);
+            margin-top: 0;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        .error-box p {
+            color: #fff;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .error-box button {
+            background: var(--accent);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* MAIN CONTENT */
+        #main-content {
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid #222;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .card-info {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .card-info h3 {
+            margin: 0 0 10px;
+            color: var(--primary);
+        }
+
+        .card-info p {
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #333;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* MODAL WIKI */
+        .wiki-content {
+            background: #0a0a0a;
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            padding: 40px;
+            border-radius: 20px;
+            overflow-y: auto;
+            border: 1px solid var(--secondary);
+        }
+
+        .wiki-header-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .wiki-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .wiki-section h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BOTÃO FLUTUANTE DE ALTERNÂNCIA -->
+    <button id="float-btn" class="floating-mobile-btn hidden" onclick="toggleView()">
+        📱 Ver Jogos Mobile
+    </button>
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="overlay">
+        <div class="login-box">
+            <h2>🎮 VORTEX CORE</h2>
+            <p>Identifique-se para acessar a base de dados</p>
+            <small>(Se for seu primeiro acesso com este nome, a senha digitada será registrada)</small>
+            <input type="text" id="username" placeholder="Seu Nome">
+            <input type="password" id="password" placeholder="Senha">
+            <button onclick="handleLogin()">Acessar Arquivos</button>
+        </div>
+    </div>
+
+    <!-- CAIXA DE MENSAGEM DE ERRO (FUNDO BORRADO) -->
+    <div id="error-screen" class="error-overlay hidden">
+        <div class="error-box">
+            <h3>⚠️ FALHA DE AUTENTICAÇÃO</h3>
+            <p>"Tá errando de proposito ou tá testando o meu sistema de segurança? &gt;:D"</p>
+            <button onclick="closeError()">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (OCULTO POR PADRÃO) -->
+    <div id="main-content" class="hidden">
+        <header>
+            <div id="header-normal">
+                <h1 class="title">GameVortex</h1>
+                <img 
+                    src="https://uploads.onecompiler.io/44gqawx5e/44p6apfhz/a0913da3-7e3f-43ca-8d95-c96f3189e272.png" 
+                    alt="GameVortex Logo" 
+                    class="main-logo"
+                >
+                <p id="currentTime" style="color: var(--primary); font-size: 0.9rem; margin-bottom: 15px; font-weight: bold;"></p>
+                <p class="logo-subtitle">O Futuro do Entretenimento Interativo</p>
+                <div class="dev-credits">
+                    🛠️ Desenvolvedores: <b>C.Lucas, F.Vitor, Josué e S.Victor</b>
+                </div>
+            </div>
+        </header>
+
+        <div id="games-container" class="game-grid"></div>
+    </div>
+
+    <!-- MODAL DA WIKI -->
+    <div id="wiki-screen" class="overlay hidden">
+        <div class="wiki-content">
+            <button class="close-btn" onclick="closeWiki()">✖ Fechar Artigo</button>
+            <div id="wiki-data"></div>
+        </div>
+    </div>
+
+    <script>
+        const games = [
+            {
+                id: 'gta6',
+                cat: 'desktop',
+                title: "GTA VI",
+                platform: "PS5 | Xbox Series X/S",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44mt5x8ys/gta-vi-wallpaper-made-from-all-the-new-artwork-v0-wl3ltpnjxeze1.webp",
+                desc: "A maior simulação de crime e vida social já feita na história dos videogames.",
+                dev: "Rockstar Games",
+                year: "2025 / 2026",
+                awards: "Jogo Mais Aguardado da Década & Jogo do Ano",
+                gameplay: "Apresentando um sistema revolucionário de dupla de protagonistas, Lucia e Jason, o game eleva o nível da inteligência artificial urbana. Os NPCs utilizam rotinas avançadas baseadas em redes neurais simuladas, reagindo de forma orgânica ao clima dinâmico e às redes sociais do jogo. O ecossistema de Leonida inclui pântanos hiper-realistas repletos de vida selvagem hostil e uma simulação econômica de mercado negro que flutua de acordo com os assaltos do jogador.",
+                impact: "O trailer de revelação quebrou o recorde mundial do YouTube como o vídeo não-musical mais visto em 24 horas. O título consolidou o uso definitivo de ray tracing global em consoles de nona geração, estabelecendo um novo teto financeiro e cultural para a indústria de entretenimento global.",
+                trivia: "A Rockstar desenvolveu uma tecnologia exclusiva de física para a água e cabelos que consumiu cerca de 3 anos de engenharia dedicada. Além disso, o mapa de Leonida é estimado como sendo duas vezes maior do que o mapa de Los Santos em GTA V, contendo mais de 70% de prédios exploráveis com interiores modelados."
+            },
+            {
+                id: 'wukong',
+                cat: 'desktop',
+                title: "Black Myth: Wukong",
+                platform: "PC | PS5 | Xbox Series X/S",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44mt5x8ys/Black-Myth-Wukong.webp",
+                desc: "A lendária jornada mitológica do Predestinado inspirada no clássico romance chinês.",
+                dev: "Game Science",
+                year: "2024",
+                awards: "Melhor Jogo de Ação & Melhores Efeitos Visuais (TGA)",
+                gameplay: "Misturando a precisão cirúrgica de um Action RPG Soulslike com combate dinâmico hack 'n slash. O combate gira em torno das 72 transformações místicas de Sun Wukong, permitindo ao jogador assumir a forma de monstros derrotados para usar habilidades únicas. O gerenciamento de posturas (Cercunferência, Estocada e Pilar) dita o ritmo dos duelos contra chefes massivos que utilizam magias baseadas nos elementos da natureza.",
+                impact: "Foi um dos lançamentos mais explosivos da história da plataforma Steam, ultrapassando a incrível marca de 2.4 milhões de jogadores simultâneos logo nos primeiros dias. O jogo colocou o mercado de desenvolvimento AAA da China em evidência global, provando o imenso potencial de estúdios independentes orientais com altíssimo orçamento.",
+                trivia: "O estúdio Game Science escaneou em 3D dezenas de templos, santuários e relíquias budistas reais espalhados pela China para construir os cenários do jogo com fidelidade arqueológica. O actor de captura de movimentos responsável por Wukong passou meses estudando óperas tradicionais chinesas para replicar os trejeitos acrobáticos clássicos do Rei Macaco."
+            },
+            {
+                id: 'eldenring_dlc',
+                cat: 'desktop',
+                title: "Elden Ring: Shadow of the Erdtree",
+                platform: "PC | PS4 | PS5 | Xbox One | Xbox Series X/S",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44ng64ahk/ELDEN-RING-Shadow-of-the-Erdtree.webp",
+                dev: "FromSoftware",
+                year: "2024",
+                awards: "Melhor Expansão/DLC do Ano (TGA)",
+                desc: "A aclamada expansão que leva o Maculado às misteriosas Terras das Sombras seguindo os passos de Miquella.",
+                gameplay: "Introduz uma nova mecânica de progressão exclusiva baseada nos 'Fragmentos de Scadutree', nivelando o desafio mesmo para avatares de nível máximo. Apresenta 8 novas categorias de armas (como as garras de artes marciais e espadas colossais duplas), além de masmorras com um design vertical intrincado nunca antes visto na história da desenvolvedora.",
+                impact: "Redefiniu o conceito e a escala do que é considerado uma 'Expansão' na indústria moderna. Vendeu mais de 5 milhões de cópias em menos de uma semana, gerando debates acalorados sobre o nível de dificuldade elevado imposto pelo vilão final, Messmer o Empalador, e o lorde consorte.",
+                trivia: "A história deste DLC foi construída utilizando fragmentos da mitologia original criados pelo renomado escritor George R.R. Martin que não couberam na campanha principal de 2022."
+            },
+            {
+                id: 'cyberpunk_orion',
+                cat: 'desktop',
+                title: "Cyberpunk 2077: Project Orion",
+                platform: "PC | Próxima Geração",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44pu5bphz/Cyberpunk-2077-2.0-patch-728x410.webp",
+                dev: "CD Projekt RED",
+                year: "Em Desenvolvimento (Janela 2026+)",
+                awards: "Projeto Tecnológico Mais Otimizado por Antecipação",
+                desc: "A aguardada sequência do universo Cyberpunk que promete expandir as fronteiras da distopia cibernética.",
+                gameplay: "Planejado para rodar nativamente sob a robusta Unreal Engine 5, abandonando a antiga REDengine. O game trará mecânicas aprimoradas de implantes cibernéticos com consequências psicológicas diretas (como a psicose cibernética parcial), narrativa ramificada de facções com maior impacto político nas megacorporações e física destrutiva de cenários em tempo real.",
+                impact: "Sendo desenvolvido pelo recém-fundado estúdio da CDPR em Boston, o game carrega a responsabilidade de realizar o lançamento perfeito que o primeiro jogo não conseguiu em 2020, utilizando o aprendizado acumulado na aclamada atualização 2.0 e na DLC Phantom Liberty.",
+                trivia: "A equipe de roteiristas revelou em fóruns que a trama explorará as inteligências artificiais sombrias além da lendária 'Blackwall', expandindo muito a lore cósmica da franquia."
+            },
+            {
+                id: 're9_revenant',
+                cat: 'desktop',
+                title: "Resident Evil 9: Revenant Shadow",
+                platform: "PC | PS5 | Xbox Series X/S",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44pu5bphz/resident-evil-9-revenant-shadows-pops-up-online-along-with-v0-TVASg7_8cr4oQV34XyUcH_mDgMv4RyGqQh_3Gb53gb8.webp",
+                dev: "Capcom",
+                year: "2025 / 2026",
+                awards: "Melhor Design de Áudio & Terror Mais Imersivo",
+                desc: "O novo capítulo da saga de Survival Horror da Capcom que promete amarrar pontas soltas da franquia e introduzir uma ameaça biológica sem precedentes.",
+                gameplay: "Adota uma estrutura de semi-mundo aberto em uma ilha isolada no sudeste asiático de inspiração mitológica. O game alterna entre furtividade em florestas densas e combate tático claustrofóbico em laboratórios abandonados. A escassez crônica de recursos retorna, combinada com um sistema avançado de alucinações psicológicas geradas por esporos que alteram o cenário em tempo real.",
+                impact: "Construído sobre uma versão massivamente otimizada da RE Engine, o jogo redefine os efeitos de iluminação global e fumaça volumétrica, criando ambientes de terror fotorrealistas que exigem o máximo dos chips gráficos atuais.",
+                trivia: "Rumores internos apontam que o jogo traz de volta rostos lendários da série como Leon S. Kennedy e Jill Valentine atuando como mentores de uma nova equipe de contenção biológica da BSAA."
+            },
+            {
+                id: 'mh_wilds',
+                cat: 'desktop',
+                title: "Monster Hunter Wilds",
+                platform: "PC | PS5 | Xbox Series X/S",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44p63d4wr/header-monster-hunter-wilds-hompage-mhw-wiki-guide-300px2_2-min.webp",
+                dev: "Capcom",
+                year: "2025",
+                awards: "Melhor Jogo Cooperativo & Excelência em Ecossistema",
+                desc: "A evolução máxima da franquia de caça a monstros, com ecossistemas vivos que mudam dinamicamente.",
+                gameplay: "Os mapas não possuem telas de carregamento e contam com mudanças climáticas extremas em tempo real (como tempestades de areia devastadoras que atraem monstros alfa únicos). Os caçadores agora montam em criaturas chamadas 'Seikrets', permitindo curar, afiar a arma e trocar de equipamento sem interromper a movimentação ou a perseguição.",
+                impact: "Tornou-se instantaneamente o padrão da indústria para 'mundos abertos ecológicos'. A IA dos monstros foi refinada para agirem em bandos organizados ou disputarem territórios de forma completamente autônoma, sem gatilhos scriptados.",
+                trivia: "A equipe de design de áudio gravou animais reais em reservas africanas por mais de 6 meses para compor os urros complexos e os sons ambientais das novas criaturas das Terras Proibidas."
+            },
+            {
+                id: 'valorant',
+                cat: 'mobile',
+                title: "Valorant Mobile",
+                platform: "Android | iOS",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44ng64ahk/19112.png",
+                desc: "O FPS tático ultracompetitivo de PC adaptado perfeitamente para as telas móveis.",
+                dev: "Riot Games",
+                year: "2025 / 2026",
+                awards: "Melhor Jogo Competitivo de Bolso / eSport Mobile",
+                gameplay: "Adaptação milimétrica das mecânicas do PC com foco em tiro de precisão combinado com habilidades de Agentes. O esquema de controles por toque foi completamente reestruturado, adicionando menus rápidos de habilidades em carrossel e um avançado sistema de assistência de giroscópio para controle refinado de recuo de armas (spray pattern). Os mapas clássicos foram otimizados visualmente para garantir taxas estáveis de até 120Hz em dispositivos topo de linha.",
+                impact: "Criou um ecossistema competitivo global de eSports mobile unificado instantaneamente com as ligas já existentes do VCT (Valorant Champions Tour), atraindo investimentos massivos no sudeste asiático e nas Américas devido aos seus servidores dedicados de baixíssima latência (Tickrate de 128Hz adaptado).",
+                trivia: "Durante o período de testes fechados na China (sob o codinome 'Project C'), os desenvolvedores precisaram reconstruir os códigos de detecção de colisão do zero para garantir que o game rodasse fluidamente sem superaquecer aparelhos celulares intermediários. O jogo traz linhas de áudio exclusivas e um modo de treinamento de reflexos em Realidade Aumentada nativo."
+            },
+            {
+                id: 'genshin',
+                cat: 'mobile',
+                title: "Genshin Impact",
+                platform: "iOS | Android | PC | PS5",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44p63d4wr/genshin-impact-pictures-wlq3ykrxbaoadjow.webp",
+                dev: "miHoYo / HoYoverse",
+                year: "2020 - Suporte Contínuo",
+                awards: "Melhor Jogo Mobile Contínuo & Fenômeno Cultural Global",
+                desc: "O titã dos RPGs de mundo aberto que revolucionou o mercado gacha e unificou plataformas.",
+                gameplay: "Baseado em um sistema complexo de reações elementares (Combustão, Congelamento, Vaporização, etc.) onde o jogador alterna instantaneamente entre 4 personagens no campo de batalha. O mundo de Teyvat oferece milhares de quebra-cabeças ambientais, exploração vertical com planadores e masmorras atualizadas a cada seis semanas através de patchs de expansão de história.",
+                impact: "Arrecadou bilhões de dólares em tempo recorde, transformando a chinesa miHoYo em uma das maiores potências de software do mundo. O game estabeleceu o padrão de qualidade AAA para jogos mobile, forçando a concorrência a investir pesado em motores gráficos para celulares.",
+                trivia: "A trilha sonora do jogo é executada por orquestras filarmônicas renomadas do mundo real (como a Orquestra Filarmônica de Londres e de Tóquio), mudando os instrumentos tradicionais de acordo com a região cultural retratada no game."
+            },
+            {
+                id: 'warzone_mobile',
+                cat: 'mobile',
+                title: "Call of Duty: Warzone Mobile",
+                platform: "Android | iOS",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44p63d4wr/call-duty-warzone-mobile-game-260nw-1997153981.webp",
+                dev: "Activision",
+                year: "2024 / 2025",
+                awards: "Gráficos Mobile Mais Avançados do Mercado",
+                desc: "O Battle Royale visceral de Call of Duty trazendo de volta o icônico mapa de Verdansk direto no seu bolso.",
+                gameplay: "Suporta partidas intensas com até 120 jogadores reais na mesma sala. Possui mecânicas idênticas às de console: sistema de contratos, blindagem de placas, finalizações em terceira pessoa e o famoso combate de redenção no Gulag. Traz progressão cruzada real (Cross-Progression): o nível das suas armas e passes de batalha sobem simultaneamente no Celular, PC e Console.",
+                impact: "Empurrou os limites de hardware dos smartphones modernos ao utilizar a engine unificada nativa da franquia principal de Call of Duty. Isso permitiu o compartilhamento de tecnologias de renderização gráfica complexas direto em chipsets Snapdragon e Apple Silicon.",
+                trivia: "A volta do mapa de Verdansk no mobile foi uma resposta direta aos pedidos nostálgicos da comunidade global, já que nos consoles o mapa original foi substituído por novas localizações."
+            },
+            {
+                id: 'zzz_hoyoverse',
+                cat: 'mobile',
+                title: "Zenless Zone Zero",
+                platform: "iOS | Android | PC | PS5",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44pu5bphz/unnamed.webp",
+                dev: "HoYoverse",
+                year: "2024 - Suporte Contínuo",
+                awards: "Melhor Direção de Arte Urbana & Combate Estilizado",
+                desc: "O RPG de ação e fantasia urbana pós-apocalíptica com uma estética marcante inspirada na cultura hip-hop e cyberpunk dos anos 90.",
+                gameplay: "Focado em um sistema de combate frenético de hack 'n' slash em arenas fechadas. O ponto forte são os 'Chain Attacks' (ataques em cadeia engatados ao atordoar inimigos) e esquivas perfeitas com respostas visuais instantâneas. O jogador atua como um 'Proxy', um guia cibernético que ajuda agentes a navegar por anomalias dimensionais chamadas Cavidades usando um tabuleiro de TVs digitais.",
+                impact: "Trouxe uma identidade visual e musical refrescante para o mercado gacha de dispositivos móveis, consolidando o domínio absolutoda HoYoverse no topo das paradas de downloads mundiais.",
+                trivia: "O design sonoro dos menus e impactos de golpes foi projetado utilizando sintetizadores analógicos vintage reais para evocar uma atmosfera 'Lo-Fi/Electro' única."
+            },
+            {
+                id: 'sololeveling_arise',
+                cat: 'mobile',
+                title: "Solo Leveling: Arise",
+                platform: "Android | iOS | PC",
+                img: "https://uploads.onecompiler.io/44gqawx5e/44pu5bphz/ss_32a7ab88d959fad2e26374f16e2e769135468588.1920x1080.jpg",
+                dev: "Netmarble",
+                year: "2024 / 2025",
+                awards: "Melhor Adaptação de Anime para Mobile",
+                desc: "O jogo oficial baseado no aclamado fenômeno mundial dos Manhwas e Animes, Solo Leveling.",
+                gameplay: "O jogador controla Sung Jinwoo no clássico sistema de evolução de Caçador do nível E ao nível S. Conta com combos aéreos brutais, esquivas extremas 'Shadow Step' e a invocação do icônico exército de sombras ('Erga-se!'). É possível recrutar outros caçadores da obra original para agir como suportes estratégicos em masmorras cheias de chefes colossais.",
+                impact: "Quebrou recordes de pré-registro na Play Store e App Store com mais de 15 milhões de usuários inscritos antes do lançamento, alavancando a cultura pop coreana na indústria global de smartphones.",
+                trivia: "O game inclui capítulos inéditos de história expandida supervisionados de perto e aprovados diretamente pelos criadores originais do manhwa, enriquecendo o passado de personagens secundários."
+            }
+        ];
+
+        let currentView = 'desktop';
+
+        function handleLogin() {
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value;
+
+            if (usernameInput.length < 3) {
+                alert("O nome de usuário precisa ter pelo menos 3 caracteres.");
+                return;
+            }
+            if (passwordInput.length === 0) {
+                alert("Por favor, digite uma senha.");
+                return;
+            }
+
+            // Chave baseada no nome de usuário
+            const storageKey = `vortex_user_${usernameInput.toLowerCase()}`;
+            const registeredPassword = localStorage.getItem(storageKey);
+
+            if (registeredPassword === null) {
+                // PRIMEIRO ACESSO DO USUÁRIO: Grava a senha digitada no dispositivo
+                localStorage.setItem(storageKey, passwordInput);
+                proceedToMain();
+            } else {
+                // USUÁRIO JÁ EXISTE: Valida rigorosamente se a senha é idêntica
+                if (passwordInput === registeredPassword) {
+                    proceedToMain();
+                } else {
+                    // BLOQUEADO: Exibe a tela de erro e impede qualquer processamento posterior
+                    document.getElementById('error-screen').classList.remove('hidden');
+                }
+            }
+        }
+
+        function proceedToMain() {
+            // Oculta telas de autenticação e revela a interface principal de forma estrita
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('error-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('float-btn').classList.remove('hidden');
+            
+            startClock();
+            render();
+        }
+
+        function closeError() {
+            // Fecha apenas a janela de aviso, o login continua ativo e bloqueando a tela de fundo
+            document.getElementById('error-screen').classList.add('hidden');
+            const passField = document.getElementById('password');
+            passField.value = ''; 
+            passField.focus();
+        }
+
+        function toggleView() {
+            const btn = document.getElementById('float-btn');
+            if (currentView === 'desktop') {
+                currentView = 'mobile';
+                btn.innerHTML = "💻 Ver Jogos PC/Console";
+            } else {
+                currentView = 'desktop';
+                btn.innerHTML = "📱 Ver Jogos Mobile";
+            }
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function render() {
+            const container = document.getElementById('games-container');
+            const filtered = games.filter(g => g.cat === currentView);
+
+            container.innerHTML = filtered.map(g => `
+                <div class="game-card" onclick="showWiki('${g.id}')">
+                    <img src="${g.img}" alt="${g.title}" onerror="this.src='https://placehold.co/600x400/151515/00f2ff?text=${g.title}'">
+                    <div class="card-info">
+                        <span class="tag">${g.platform}</span>
+                        <h3>${g.title}</h3>
+                        <p>${g.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showWiki(id) {
+            const g = games.find(x => x.id === id);
+            document.getElementById('wiki-data').innerHTML = `
+                <img src="${g.img}" class="wiki-header-img" alt="${g.title}" onerror="this.src='https://placehold.co/800x400/151515/00f2ff?text=${g.title}'">
+                <h1>${g.title}</h1>
+                <p><strong>Desenvolvedora:</strong> ${g.dev}</p>
+                <p><strong>Lançamento/Janela:</strong> ${g.year}</p>
+                <p><strong>Destaque/Prêmio:</strong> ${g.awards}</p>
+                
+                <div class="wiki-section">
+                    <h4>🎮 Visão Geral e Resumo</h4>
+                    <p>${g.desc}</p>
+                </div>
+                <div class="wiki-section">
+                    <h4>⚔️ Sistemas de Jogabilidade (Gameplay)</h4>
+                    <p>${g.gameplay}</p>
+                </div>
+                <div class="wiki-section">
+                    <h4>🚀 Impacto no Mercado e Tecnologia</h4>
+                    <p>${g.impact}</p>
+                </div>
+                <div class="wiki-section">
+                    <h4>💡 Arquivos Secretos & Curiosidades</h4>
+                    <p>${g.trivia}</p>
+                </div>
+            `;
+            document.getElementById('wiki-screen').classList.remove('hidden');
+        }
+
+        function closeWiki() {
+            document.getElementById('wiki-screen').classList.add('hidden');
+        }
+
+        function startClock() {
+            const timeEl = document.getElementById('currentTime');
+            setInterval(() => {
+                const now = new Date();
+                timeEl.textContent = "CONEXÃO ESTÁVEL // DATALINK: " + now.toLocaleString('pt-BR');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
